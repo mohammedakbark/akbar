@@ -119,7 +119,7 @@ export default function Experience() {
       }
 
       // Cards — staggered reveal with per-card timeline
-      cardsRef.current.forEach((card, i) => {
+      cardsRef.current.forEach((card) => {
         if (!card) return;
         const node = card.querySelector("[data-node]");
         const inner = card.querySelector("[data-card]");

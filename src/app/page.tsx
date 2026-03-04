@@ -7,7 +7,6 @@ import Services from "@/components/sections/Services";
 import Achievements from "@/components/sections/Achievements";
 import Experience from "@/components/sections/Experience";
 import Projects from "@/components/sections/Projects";
-import Testimonials from "@/components/sections/Testimonials";
 import Contact from "@/components/sections/Contact";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -28,7 +27,8 @@ const EnhancedBackground = dynamic(
  */
 export default function Home() {
   useEffect(() => {
-    let lenis: { on: (e: string, fn: () => void) => void; raf: (t: number) => void; destroy: () => void };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let lenis: any;
     let rafId: number;
 
     const initLenisAndScrollTrigger = async () => {
