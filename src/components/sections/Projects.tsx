@@ -10,7 +10,7 @@ const projects = [
   {
     id: 1,
     title: "F9 Cars",
-    category: "Mobile App",
+    category: "Car Service App",
     description:
       "Premium car wash booking platform with seamless booking experience and real-time slot management.",
     tags: ["Flutter", "Firebase", "REST API", "Payment Gateway"],
@@ -20,7 +20,7 @@ const projects = [
   {
     id: 2,
     title: "Wheelskart",
-    category: "Mobile App",
+    category: "Used Car Auction App",
     description:
       "Second-hand car auction platform with live bidding, real-time updates, and instant notifications.",
     tags: ["Flutter", "WebSocket", "REST API", "Firebase"],
@@ -30,7 +30,7 @@ const projects = [
   {
     id: 3,
     title: "Animaline.in",
-    category: "Mobile App",
+    category: "Animal Trading App",
     description:
       "Comprehensive marketplace for animal trading with live chat support and location-based listings.",
     tags: ["Flutter", "Firebase", "REST API", "WebSocket", "Google Maps Services", "Chats", "Google Ads", "Payment Gateway"],
@@ -40,7 +40,7 @@ const projects = [
   {
     id: 4,
     title: "Dazzles App",
-    category: "Logistics",
+    category: "Produts Management App",
     description:
       "Logistics app with real-time tracking, parking management, and end-to-end workflow automation.",
     tags: ["Flutter", "Google Maps Services", "REST API"],
