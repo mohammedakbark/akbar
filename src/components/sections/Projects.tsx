@@ -58,7 +58,7 @@ const projects = [
     ios: null,
   },
   {
-    id: 5,
+    id: 6,
     title: "Crisant HRMS",
     category: "HRMS",
     description:
