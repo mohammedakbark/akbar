@@ -51,12 +51,12 @@ export default function Navigation() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Link
+          {/* <Link
             href="#hero"
             className="bg-gradient-to-r from-accent to-accent-hover bg-clip-text text-transparent"
           >
-            AK
-          </Link>
+            AKBAR.K
+          </Link> */}
         </motion.div>
 
         {/* Navigation Links */}
