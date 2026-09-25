@@ -9,59 +9,24 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        // Viewports where the Projects section uses pinned horizontal scrolling
+        hscroll: { raw: "(min-width: 1024px) and (min-height: 700px)" },
+      },
       colors: {
-        background: "#0a0a0a",
-        foreground: "#ffffff",
-        muted: "#666666",
-        "muted-foreground": "#999999",
-        accent: "#6B5B95",
-        "accent-hover": "#5A4A7F",
+        background: "#0a0a0b",
+        surface: "#111113",
+        foreground: "#f5f5f7",
+        muted: "#6b6b73",
+        "muted-foreground": "#a1a1aa",
+        accent: "#8B7BD8",
+        "accent-hover": "#7A69CC",
+        "accent-muted": "rgba(139, 123, 216, 0.25)",
+        line: "rgba(255, 255, 255, 0.08)",
       },
       fontFamily: {
-        sans: ["Inter", ...defaultTheme.fontFamily.sans],
+        sans: ["var(--font-inter)", ...defaultTheme.fontFamily.sans],
         mono: ["Fira Code", ...defaultTheme.fontFamily.mono],
-      },
-      animation: {
-        "fade-in": "fade-in 0.5s ease-in-out",
-        "slide-up": "slide-up 0.5s ease-out",
-        "slide-down": "slide-down 0.5s ease-out",
-        "slide-left": "slide-left 0.5s ease-out",
-        "slide-right": "slide-right 0.5s ease-out",
-        pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        shimmer: "shimmer 2s infinite",
-      },
-      keyframes: {
-        "fade-in": {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
-        "slide-up": {
-          "0%": { transform: "translateY(10px)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
-        },
-        "slide-down": {
-          "0%": { transform: "translateY(-10px)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
-        },
-        "slide-left": {
-          "0%": { transform: "translateX(10px)", opacity: "0" },
-          "100%": { transform: "translateX(0)", opacity: "1" },
-        },
-        "slide-right": {
-          "0%": { transform: "translateX(-10px)", opacity: "0" },
-          "100%": { transform: "translateX(0)", opacity: "1" },
-        },
-        shimmer: {
-          "0%": { backgroundPosition: "-1200px 0" },
-          "100%": { backgroundPosition: "calc(1200px + 100%) 0" },
-        },
-      },
-      transitionDuration: {
-        "400": "400ms",
-      },
-      backdropFilter: {
-        none: "none",
-        blur: "blur(1px)",
       },
     },
   },
