@@ -6,13 +6,10 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/lib/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
-      screens: {
-        // Viewports where the Projects section uses pinned horizontal scrolling
-        hscroll: { raw: "(min-width: 1024px) and (min-height: 700px)" },
-      },
       colors: {
         background: "#0a0a0b",
         surface: "#111113",

@@ -1,36 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Smartphone, Monitor, Server, Wrench } from "lucide-react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
+import TechStack from "@/components/sections/skills/TechStack";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const skillCategories = [
-  {
-    title: "Mobile",
-    icon: Smartphone,
-    skills: ["Flutter", "Dart", "Android", "iOS", "React Native"],
-  },
-  {
-    title: "Frontend",
-    icon: Monitor,
-    skills: ["React", "Next.js", "TypeScript", "Tailwind CSS", "HTML/CSS"],
-  },
-  {
-    title: "Backend",
-    icon: Server,
-    skills: ["Node.js", "Firebase", "MongoDB", "REST API", "WebSocket", "PostgreSQL"],
-  },
-  {
-    title: "Tools",
-    icon: Wrench,
-    skills: ["Git", "GitHub", "Docker", "Postman", "CI/CD", "Figma"],
-  },
-];
 
 const stats = [
   { value: 20, suffix: "+", label: "Projects delivered" },
@@ -163,31 +140,7 @@ export default function About() {
         </div>
 
         {/* Skills */}
-        <h3
-          data-reveal
-          className="mb-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted"
-        >
-          Technical proficiency
-        </h3>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {skillCategories.map(({ title, icon: Icon, skills }) => (
-            <div key={title} data-reveal className="card card-hover p-6">
-              <div className="mb-5 flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                  <Icon className="h-[18px] w-[18px]" />
-                </span>
-                <h4 className="text-base text-foreground">{title}</h4>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {skills.map((skill) => (
-                  <span key={skill} className="chip">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        <TechStack />
       </Reveal>
     </section>
   );
