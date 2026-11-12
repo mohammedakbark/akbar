@@ -21,6 +21,12 @@ export default function Home() {
   const lenisRef = useRef<LenisType | null>(null);
   const onLoaded = useCallback(() => setReady(true), []);
 
+  // Always start at the top so the loader hands off to the hero entrance (not mid-page on reload).
+  useEffect(() => {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    if (!location.hash) window.scrollTo(0, 0);
+  }, []);
+
   // Lenis smooth scrolling + smooth anchor links.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;

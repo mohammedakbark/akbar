@@ -12,18 +12,27 @@ const serif = Instrument_Serif({
 });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
-const title = "Mohammed Akbar K · Software Engineer";
+const title = "Mohammed Akbar K · Software Engineer: Mobile Apps & End-to-End Delivery";
 const description =
-  "Software Engineer from Kerala shipping Flutter apps to the Play Store and App Store. Mobile, real-time systems, Node.js and React.";
+  "Software engineer from Kerala who turns business problems into simple software: mobile apps first, delivered end to end with backend, web and automation.";
+
+// Absolute base for share-card URLs. Set NEXT_PUBLIC_SITE_URL in Vercel once you have a custom domain;
+// until then Vercel's production URL is used automatically.
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title,
   description,
   keywords: [
     "Mohammed Akbar K",
-    "Flutter Developer",
     "Software Engineer",
     "Mobile App Developer Kerala",
+    "Flutter Developer",
+    "Mobile App Developer",
+    "Business Automation",
     "Node.js",
     "React",
   ],

@@ -1,42 +1,14 @@
 import type { Project } from "@/data/content";
-import { SafeImage } from "@/components/ui/bits";
+import MiniUI from "./MiniUI";
 
-/** Stylised app UI shown until a real screenshot exists at project.image. */
-function MockScreen({ p }: { p: Project }) {
-  return (
-    <div className="flex h-full w-full flex-col gap-2 bg-[#0c0c0e] p-3 pt-7">
-      <div className="flex items-center gap-2">
-        <div className="h-6 w-6 rounded-lg" style={{ background: p.color }} />
-        <div className="text-[10px] font-semibold text-white">{p.title}</div>
-      </div>
-      <div className="mt-1 h-20 rounded-xl p-2" style={{ background: `linear-gradient(135deg, ${p.color}, ${p.color}55)` }}>
-        <div className="h-1.5 w-12 rounded bg-white/70" />
-        <div className="mt-1.5 h-1.5 w-20 rounded bg-white/40" />
-      </div>
-      <div className="grid grid-cols-2 gap-2">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="h-12 rounded-lg border border-white/5 bg-white/[0.04] p-1.5">
-            <div className="h-3 w-3 rounded" style={{ background: `${p.color}aa` }} />
-            <div className="mt-1.5 h-1 w-8 rounded bg-white/20" />
-          </div>
-        ))}
-      </div>
-      <div className="mt-auto flex justify-around rounded-lg bg-white/[0.04] py-1.5">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="h-2 w-2 rounded-sm" style={{ background: i === 0 ? p.color : "#ffffff33" }} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
+/** Phone frame showing the app's animated "key moment" screen. */
 export default function Phone({ p, className = "" }: { p: Project; className?: string }) {
   return (
     <div
       className={`relative aspect-[9/19] overflow-hidden rounded-[1.6rem] border-[5px] border-[#1d1d20] bg-black shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)] ${className}`}
     >
       <div className="absolute left-1/2 top-1.5 z-10 h-3.5 w-14 -translate-x-1/2 rounded-full bg-black" />
-      <SafeImage src={p.image} alt={`${p.title} app screen`} className="h-full w-full object-cover object-top" fallback={<MockScreen p={p} />} />
+      <MiniUI p={p} />
     </div>
   );
 }

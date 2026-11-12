@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { animate, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { intro, stats } from "@/data/content";
+import { intro, process, stats } from "@/data/content";
 import { ScrollText, FadeUp } from "@/components/ui/text";
 import { SectionLabel, DrawLine } from "@/components/ui/Section";
 import { Parallax } from "@/components/ui/bits";
@@ -57,7 +57,33 @@ export default function Intro() {
           </Parallax>
         </div>
 
-        <div className="mt-20 grid grid-cols-2 border-l border-t border-line md:grid-cols-4">
+        {/* How I work */}
+        <div className="mt-24">
+          <div className="mb-8 flex items-center gap-4">
+            <span className="h-px w-8 bg-line" />
+            <span className="label">How I work</span>
+          </div>
+          <ol className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+            {process.map((step, i) => (
+              <FadeUp key={step.title} delay={i * 0.1} className="h-full">
+                <li className="sweep group flex h-full flex-col bg-background p-6 md:p-7">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[11px] text-faint">0{i + 1}</span>
+                    {i < process.length - 1 && (
+                      <span className="hidden font-mono text-[11px] text-faint transition-transform duration-500 group-hover:translate-x-1 lg:inline">→</span>
+                    )}
+                  </div>
+                  <h3 className="mt-10 text-xl font-semibold tracking-tight transition-transform duration-500 group-hover:translate-x-1">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 text-[14px] leading-relaxed text-dim">{step.text}</p>
+                </li>
+              </FadeUp>
+            ))}
+          </ol>
+        </div>
+
+        <div className="mt-6 grid grid-cols-2 border-l border-t border-line md:grid-cols-4">
           {stats.map((s, i) => (
             <FadeUp key={s.label} delay={i * 0.08} className="sweep group border-b border-r border-line p-6 md:p-8">
               <div className="text-4xl font-semibold tracking-[-0.04em] transition-transform duration-500 group-hover:-translate-y-1 md:text-5xl">

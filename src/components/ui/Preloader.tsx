@@ -56,7 +56,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
               transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
               className="text-center text-3xl font-semibold tracking-[-0.03em] sm:text-5xl"
             >
-              Building apps for <span className="font-serif font-normal italic">real phones.</span>
+              Simple software for <span className="font-serif font-normal italic">real problems.</span>
             </motion.p>
           </div>
 

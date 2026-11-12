@@ -18,7 +18,7 @@ export default function About() {
       id="about"
       num="04"
       label="About me"
-      title="Engineer first. *Product-minded* always."
+      title="Problem first. *Code second.*"
       aside={
         <div className="mt-10 space-y-5">
           {facts.map((f) => (

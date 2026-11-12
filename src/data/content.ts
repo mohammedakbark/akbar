@@ -1,22 +1,24 @@
 /**
  * Single source of truth for all portfolio content.
  * Edit text, links and assets here — components only render it.
+ * Words wrapped in *asterisks* render in the italic serif accent.
  */
 
 export const profile = {
   name: "Mohammed Akbar K",
   shortName: "Akbar",
-  role: "Software Engineer",
+  role: "Software Engineer · Mobile apps & end-to-end delivery",
   location: "Malappuram, Kerala",
   country: "IN",
   timeZone: "Asia/Kolkata",
   tzLabel: "IST",
-  status: "Open to roles & freelance",
+  status: "Open to roles & client projects",
   email: "makbarkozhikkal@gmail.com",
   phone: "+91 98464 75854",
   phoneHref: "tel:+919846475854",
   whatsapp: "https://wa.me/919846475854",
-  photo: "/profile.jpg",
+  photo: "/profile/center.webp",
+  photoDir: "/profile", // 9 head-direction frames: center, left, right, top, bottom, top-left, …
   resume: "/resume.pdf",
   socials: [
     { label: "GitHub", href: "https://github.com/mohammedakbark" },
@@ -26,25 +28,31 @@ export const profile = {
 };
 
 export const hero = {
-  badge: "Open to mobile & full-stack roles",
-  // Words wrapped in *asterisks* render in the italic serif.
-  headline: "I build apps that live on *real phones,* not just in *pitch decks.*",
+  badge: "Open to roles & client projects",
+  headline: "You bring the *business headache.* I build the software that makes it disappear.",
   intro:
-    "Software Engineer in Kerala with 3+ years shipping Flutter apps to the Play Store and App Store, from booking flows and live auctions to fintech. I care about what happens after launch: crashes, edge cases and the 2G connection.",
+    "Software engineer from Kerala. Mobile apps are my craft; with an AI-accelerated workflow I also deliver the backend and web pieces, so you get one person who takes a business problem all the way to a working product.",
 };
 
 export const stats = [
   { value: "20+", label: "Projects delivered" },
   { value: "50K+", label: "Users on shipped apps" },
-  { value: "6", label: "Apps live on the stores" },
+  { value: "6", label: "Products live in production" },
   { value: "3+", label: "Years in production" },
 ];
 
 export const intro = {
-  lead: "I write software for moments when an app has one job and no second chance: a car wash slot that has to be there, a bid that has to land before the timer ends, a payment that has to clear.",
-  sub: "Marketplaces with live chat and maps. Auctions running on WebSockets. HR and logistics tools people use every working day.",
-  closer: ["*Shipping is the easy part.*", "Keeping it fast, stable and loved is the job."],
+  lead: "Most businesses don't need more software. They need the *right* software: the booking that never double-books, the report that writes itself, the approval that no longer lives in a WhatsApp group.",
+  sub: "Car-wash bookings, live auctions, HR, logistics, marketplaces. Different industries, same job: find the bottleneck and remove it.",
+  closer: ["*Code is the easy part.*", "Understanding the problem is the job."],
 };
+
+export const process = [
+  { title: "Understand", text: "Sit with the people doing the work and map how it really happens today." },
+  { title: "Simplify", text: "Find the smallest solution that removes the pain, not the biggest one I could build." },
+  { title: "Build & ship", text: "Mobile, backend or web, whatever fits. Tested, released and in people's hands." },
+  { title: "Automate & support", text: "Remove the manual steps that are left, watch how it's used, and keep improving it." },
+];
 
 export type Project = {
   id: string;
@@ -52,9 +60,10 @@ export type Project = {
   sector: string;
   year: string;
   role: string;
-  summary: string;
+  problem: string;
+  summary: string; // the solution
   tags: string[];
-  image: string;
+  icon: string; // real app icon (from the store listing)
   color: string; // accent used for the card's glow / thumbnail tint
   android?: string | null;
   ios?: string | null;
@@ -66,11 +75,12 @@ export const projects: Project[] = [
     title: "Wheelskart",
     sector: "Automotive",
     year: "2025",
-    role: "Flutter Developer",
+    role: "Mobile + real-time",
+    problem: "Dealers were losing used-car auctions to slow, manual bid updates.",
     summary:
-      "A used-car auction platform with live bidding. Real-time price updates over WebSockets, countdown-synced bids and instant push alerts, so dealers never miss the closing second.",
+      "A live auction app with a 100+ point vehicle inspection checklist. Bids update in real time over WebSockets, countdowns stay in sync on every phone, and instant alerts mean no dealer misses the closing second.",
     tags: ["Flutter", "WebSocket", "REST API", "Firebase"],
-    image: "/apps/wheelskart.png",
+    icon: "/apps/icons/wheelskart.png",
     color: "#2563eb",
     android: "https://play.google.com/store/apps/details?id=com.crisant.wheelskart",
     ios: "https://apps.apple.com/in/app/wheels-kart/id6749476545",
@@ -80,11 +90,11 @@ export const projects: Project[] = [
     title: "F9 Cars",
     sector: "Automotive",
     year: "2024",
-    role: "Flutter Developer",
-    summary:
-      "Premium car-wash booking with real-time slot management and in-app payments.",
-    tags: ["Flutter", "Firebase", "Payments"],
-    image: "/apps/f9cars.png",
+    role: "Mobile + payments",
+    problem: "Phone-call bookings caused double-booked car-wash slots.",
+    summary: "Self-serve booking with customer and staff modules, QR login, live vehicle-status tracking and PhonePe payments.",
+    tags: ["Flutter", "Firebase", "QR", "PhonePe"],
+    icon: "/apps/icons/f9cars.png",
     color: "#f97316",
     android: "https://play.google.com/store/apps/details?id=com.crisant.f9cars",
     ios: "https://apps.apple.com/in/app/f9-cars/id6738093040",
@@ -94,11 +104,11 @@ export const projects: Project[] = [
     title: "Animaline.in",
     sector: "Marketplace",
     year: "2025",
-    role: "Flutter Developer",
-    summary:
-      "An animal-trading marketplace with live chat, location-based listings, ads and payments.",
+    role: "Mobile + marketplace",
+    problem: "Animal buyers and sellers had no trusted, local way to find each other.",
+    summary: "A marketplace with location-based listings, favorites, premium plans, live chat and payments.",
     tags: ["Flutter", "Maps", "Chat", "WebSocket"],
-    image: "/apps/animaline.png",
+    icon: "/apps/icons/animaline.png",
     color: "#10b981",
     android: "https://play.google.com/store/apps/details?id=com.crisant.animaline.in",
     ios: null,
@@ -106,13 +116,13 @@ export const projects: Project[] = [
   {
     id: "dazzles",
     title: "Dazzles",
-    sector: "B2B",
+    sector: "Automation",
     year: "2025",
-    role: "Flutter Developer",
-    summary:
-      "Product and logistics management with real-time tracking and end-to-end workflow automation.",
-    tags: ["Flutter", "Google Maps", "REST API"],
-    image: "/apps/dazzles.png",
+    role: "Mobile + workflow",
+    problem: "Stock and deliveries were tracked by phone calls and guesswork.",
+    summary: "Stock, delivery and logistics in one platform, with role-based modules, parking management and push notifications.",
+    tags: ["Flutter", "Push", "REST API", "Roles"],
+    icon: "/apps/icons/dazzles.png",
     color: "#e11d48",
     android: "https://play.google.com/store/apps/details?id=com.dazzles.app",
     ios: "https://apps.apple.com/in/app/dazzles/id6746066647",
@@ -122,11 +132,11 @@ export const projects: Project[] = [
     title: "Bhasha Sagar",
     sector: "Edtech",
     year: "2024",
-    role: "Flutter Developer",
-    summary:
-      "A language-learning app for practising Indian languages, built offline-first with Hive.",
-    tags: ["Flutter", "Hive", "Firebase"],
-    image: "/apps/bhashasagar.png",
+    role: "Mobile + localization",
+    problem: "Learners needed one place to practise many Indian languages.",
+    summary: "A multilingual learning app with dynamic localization and BLoC architecture.",
+    tags: ["Flutter", "BLoC", "Localization", "Firebase"],
+    icon: "/apps/icons/bhashasagar.png",
     color: "#eab308",
     android: "https://play.google.com/store/apps/details?id=com.ciil.bhashasagarapp",
     ios: null,
@@ -134,13 +144,13 @@ export const projects: Project[] = [
   {
     id: "crisanthrms",
     title: "Crisant HRMS",
-    sector: "B2B",
+    sector: "Automation",
     year: "2025",
-    role: "Flutter Developer",
-    summary:
-      "An HR management app for attendance, leave and employee records, used every working day.",
+    role: "Mobile + backend",
+    problem: "Attendance and leave were tracked in spreadsheets nobody trusted.",
+    summary: "One app for attendance, leave and employee records, used every working day.",
     tags: ["Flutter", "Firebase", "REST API"],
-    image: "/apps/crisanthrms.png",
+    icon: "/apps/icons/crisanthrms.png",
     color: "#8b5cf6",
     android: "https://play.google.com/store/apps/details?id=com.crisant.app",
     ios: "https://apps.apple.com/in/app/crisant-hrms/id6749476600",
@@ -148,8 +158,8 @@ export const projects: Project[] = [
 ];
 
 export const about = {
-  lead: "I started out fixing other people's apps, and that's still how I think. *Read the crash log before the brief,* find where real users get stuck, then build so it doesn't happen again.",
-  body: "Today I'm a Software Engineer at Zilmoney, a US fintech, building iOS and Android products where reliability isn't optional. Before that I shipped six cross-platform apps at Crisant across automotive, education, marketplaces and HR. I work across the stack, from Flutter UI to Node.js APIs to store releases.",
+  lead: "I don't start with code. I start with *where it hurts:* the step everyone hates, the spreadsheet nobody trusts, the process that breaks every Monday. Then I build the simplest thing that fixes it.",
+  body: "Today I'm a Software Engineer at Zilmoney, a US fintech, working across a suite of business payment, payroll and remittance products where reliability isn't optional. Before that, at Crisant, I worked directly with clients, turning their business ideas into scope and shipping six apps from plan to store.",
 };
 
 export const experience = [
@@ -160,9 +170,10 @@ export const experience = [
     period: ["2025", "Now"],
     current: true,
     points: [
-      "iOS + Android fintech products at scale",
-      "Architecture, API integration and code review",
-      "AI-assisted development workflows",
+      "7 fintech products: OnlineCheckWriter, ZilRemit, Virtual Cards, Payment Link, Payroll & more",
+      "Secure auth, Clean Architecture, Play Store + App Store releases",
+      "Tests, code review, security & compliance checks",
+      "Agentic workflows: custom skills, agents, hooks & MCP integrations",
     ],
   },
   {
@@ -172,9 +183,9 @@ export const experience = [
     period: ["2024", "2025"],
     current: false,
     points: [
-      "Shipped 6+ cross-platform apps end to end",
-      "Clean architecture with BLoC, Riverpod and Provider",
-      "Automotive, edtech, e-commerce and chat domains",
+      "Worked directly with clients to turn business ideas into scope and plans",
+      "6+ apps from planning through store release",
+      "Automotive, logistics, education & marketplace domains",
     ],
   },
   {
@@ -184,62 +195,61 @@ export const experience = [
     period: ["2023", "2024"],
     current: false,
     points: [
-      "Built and maintained multiple client apps",
-      "Mentored junior developers",
-      "Cross-functional delivery with design + backend",
+      "QR login, PhonePe payments, GPS and live chat features",
+      "Trained students: syllabus, practice problems, hands-on guidance",
     ],
   },
 ];
 
 export const expertise = [
   {
-    title: "Cross-platform mobile",
-    items: ["Flutter + Dart", "iOS + Android from one codebase", "Pixel-accurate UI", "Store release + review"],
+    title: "Problem discovery & automation",
+    items: ["Requirement discovery with clients", "Workflow mapping", "Scoping the simplest fix", "Replacing manual steps"],
   },
   {
-    title: "Architecture & state",
-    items: ["Clean architecture", "BLoC · Riverpod · Provider", "Testable, modular code", "Offline-first with Hive"],
+    title: "Mobile apps",
+    items: ["Flutter · iOS + Android", "BLoC · Riverpod · Provider · GetX", "Localization + push", "Store releases"],
   },
   {
-    title: "Real-time systems",
-    items: ["WebSockets + live updates", "Chat + push notifications", "Maps + location", "Payment gateways"],
-  },
-  {
-    title: "Backend & APIs",
-    items: ["Node.js + REST", "Firebase · MongoDB · PostgreSQL", "Auth + security", "API design + optimisation"],
+    title: "Backend & integrations",
+    items: ["REST + WebSocket integration", "Payment gateways (PhonePe)", "Firebase · Node.js · MongoDB", "AI-accelerated backend builds"],
   },
   {
     title: "Web",
-    items: ["React + Next.js", "TypeScript", "Tailwind CSS", "SEO + performance"],
+    items: ["Next.js + React (this site)", "Landing pages", "Simple dashboards", "AI-accelerated delivery"],
   },
   {
-    title: "AI-assisted engineering",
-    items: ["Claude Code in daily work", "Faster prototyping", "Assisted code review", "Spec + docs generation"],
+    title: "Quality & release",
+    items: ["Unit · widget · integration tests", "Code review (human + AI code)", "Security & compliance checks", "CI/CD + versioning"],
+  },
+  {
+    title: "AI & agentic workflows",
+    items: ["Multiple AI agents & assistants", "Custom skills, agents & hooks", "MCP integrations (Jira, Figma)", "The right tool for each job"],
   },
 ];
 
-export const note = "Users never see your architecture. *They feel it,* every time the app opens fast and never loses their data.";
+export const note = "Good software disappears. *People just notice the problem is gone.*";
 
 export const faqs = [
   {
-    q: "When can you start?",
-    short: "Short notice for the right role.",
-    a: "I'm open to full-time mobile and full-stack roles, and to selected freelance projects. Send me a note and we can work out timelines.",
+    q: "What kind of problems can you solve?",
+    short: "Anything slowed down by manual work.",
+    a: "Bookings handled over phone calls, data living in spreadsheets, approvals stuck in WhatsApp, customers with no app to reach you. If people are repeating the same manual steps every day, there's usually a simple system that can do it for them.",
   },
   {
-    q: "Do you take freelance projects?",
-    short: "Yes, end to end.",
-    a: "Yes. I can take an app from idea to the Play Store and App Store: UI, backend, payments, store listing and post-launch support.",
+    q: "Do you only build mobile apps?",
+    short: "Mobile first, complete products end to end.",
+    a: "Mobile is my specialty and where I have the deepest experience. For backend and web, I use an AI-accelerated workflow, so I can still deliver a complete product (app, API and admin panel) end to end, and I review and test everything that ships.",
   },
   {
-    q: "What's your main stack?",
-    short: "Flutter, Node.js, React.",
-    a: "Flutter and Dart for mobile, Node.js and Firebase on the backend, and React or Next.js for the web. I pick whatever fits the product best.",
+    q: "I have an idea but no spec. Can you help?",
+    short: "Yes, that's where I start.",
+    a: "Most good projects start as a problem, not a document. We talk through how things work today, I suggest the simplest solution, and we agree on scope and timeline before any code is written.",
   },
   {
-    q: "Can you work on an existing codebase?",
-    short: "Most of my work has.",
-    a: "Yes. I've spent a lot of time maintaining and refactoring apps I didn't start. I read the code first, stabilise it, then improve it step by step.",
+    q: "Are you open to full-time roles?",
+    short: "Yes, and to client projects.",
+    a: "I'm open to full-time mobile and software engineering roles, and to selected client projects. Send me a note and we can work out timelines.",
   },
   {
     q: "Do you work remotely?",
@@ -248,13 +258,13 @@ export const faqs = [
   },
   {
     q: "Do you use AI in your workflow?",
-    short: "Daily, with judgement.",
-    a: "I use AI tools like Claude Code to move faster on boilerplate, reviews and docs. Every line that ships is still my responsibility.",
+    short: "Every day, and not just one tool.",
+    a: "I use coding agents, research assistants, AI app builders and MCP integrations, each for what it does best. I build custom skills and agents to automate repeat work, and every line that ships is reviewed and tested.",
   },
 ];
 
 export const contact = {
-  lines: ["Have an app idea?", "Need it shipped?", "Have a role for me?"],
-  sub: "Every good app starts as a conversation.",
-  subItalic: "Let's start one.",
+  lines: ["Have a business problem?", "Need it automated?", "Have a role for me?"],
+  sub: "Every good solution starts with a conversation.",
+  subItalic: "Tell me what's slowing you down.",
 };

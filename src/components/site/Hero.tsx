@@ -5,7 +5,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { hero, profile } from "@/data/content";
 import { WordsUp } from "@/components/ui/text";
-import { LiveClock, LiveDot, Magnetic, RollText, SafeImage } from "@/components/ui/bits";
+import { LiveClock, LiveDot, Magnetic, RollText } from "@/components/ui/bits";
+import HeadFollow from "./HeadFollow";
 import { useReady } from "@/components/ui/ready";
 
 const WireShape = dynamic(() => import("@/components/ui/WireShape"), { ssr: false });
@@ -43,10 +44,10 @@ export default function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* Portrait: clip-reveals upward, then parallaxes on scroll. Falls back to a wireframe. */}
+      {/* Portrait: clip-reveals upward, parallaxes on scroll, and turns its head toward the cursor. */}
       <motion.div
         style={{ y: photoY, scale: photoScale, opacity: photoOpacity }}
-        className="pointer-events-none absolute inset-x-0 bottom-0 top-16 flex justify-center"
+        className="pointer-events-none absolute inset-x-0 bottom-0 top-16 flex justify-center lg:pl-[20vw]"
       >
         <motion.div
           className="flex h-full justify-center"
@@ -54,10 +55,8 @@ export default function Hero() {
           animate={ready ? { clipPath: "inset(0% 0% 0% 0%)", scale: 1 } : undefined}
           transition={{ duration: 1.5, ease }}
         >
-          <SafeImage
-            src={profile.photo}
-            alt={profile.name}
-            className="h-full max-h-[92vh] w-auto object-contain object-bottom grayscale contrast-[1.1] [mask-image:linear-gradient(to_bottom,black_55%,transparent_95%)]"
+          <HeadFollow
+            className="h-full max-h-[92vh] shrink-0 opacity-45 contrast-[1.08] lg:opacity-100 [mask-image:radial-gradient(ellipse_48%_62%_at_50%_40%,black_52%,transparent_100%)]"
             fallback={
               <div className="mt-[6vh] h-[52vh] w-[52vh] max-w-[90vw] opacity-80">
                 <WireShape kind="ico" />
@@ -93,7 +92,7 @@ export default function Hero() {
                   href="#work"
                   className="group inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-[14px] font-medium text-background transition-transform active:scale-95"
                 >
-                  <RollText>See shipped apps</RollText>
+                  <RollText>See solutions</RollText>
                   <span className="transition-transform duration-500 group-hover:translate-y-0.5">↓</span>
                 </a>
               </Magnetic>

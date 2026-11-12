@@ -47,8 +47,10 @@ function Featured({ p }: { p: Project }) {
             <span className="h-1.5 w-1.5 rounded-full bg-live" /> Featured · Live on stores
           </span>
           <h3 className="max-w-md text-3xl font-semibold leading-[1.02] tracking-[-0.03em] md:text-[2.75rem]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={p.icon} alt={`${p.title} app icon`} className="mb-4 h-12 w-12 rounded-2xl bg-white object-contain shadow-lg ring-1 ring-white/10 md:h-14 md:w-14" />
             {p.title}
-            <span className="block font-serif text-[0.8em] font-normal italic text-foreground/80">{p.sector.toLowerCase()} app</span>
+            <span className="block font-serif text-[0.8em] font-normal italic text-foreground/80">{p.sector.toLowerCase()} solution</span>
           </h3>
         </div>
         <div className="relative w-[44%] max-w-[230px] shrink-0 pr-6 pt-10 md:pr-10">
@@ -61,7 +63,12 @@ function Featured({ p }: { p: Project }) {
 
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-[1fr_auto] md:gap-10">
         <div>
-          <p className="max-w-xl text-[15px] leading-relaxed text-foreground/75">{p.summary}</p>
+          <div className="grid max-w-xl gap-4 sm:grid-cols-[5.5rem_1fr]">
+            <span className="label pt-1 text-rose-400/80">Problem</span>
+            <p className="text-[15px] leading-relaxed text-foreground/60">{p.problem}</p>
+            <span className="label pt-1 text-live/90">Solution</span>
+            <p className="text-[15px] leading-relaxed text-foreground/85">{p.summary}</p>
+          </div>
           <div className="mt-4 flex flex-wrap gap-1.5">
             {p.tags.map((t) => (
               <span key={t} className="rounded-full border border-line px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-dim">
@@ -76,7 +83,7 @@ function Featured({ p }: { p: Project }) {
         <dl className="grid grid-cols-3 gap-4 border-line md:block md:space-y-3 md:border-l md:pl-6">
           {[
             ["Year", p.year],
-            ["Role", p.role],
+            ["Scope", p.role],
             ["Sector", p.sector],
           ].map(([k, v]) => (
             <div key={k}>
@@ -108,9 +115,9 @@ export default function Work() {
     <Section
       id="work"
       num="03"
-      label="Shipped work"
-      title="Six apps. *Real stores,* real users."
-      intro="Not concept shots. Every app here is installable today. Tap a store badge and try it on your own phone."
+      label="Solutions"
+      title="Real problems. *Shipped solutions.*"
+      intro="Every project started as a business headache. Here's what it was, and what I built. All of them are live today."
     >
       <div className="mb-8 flex flex-wrap gap-2" role="tablist" aria-label="Filter by sector">
         {sectors.map((s) => (
@@ -137,7 +144,7 @@ export default function Work() {
         <div className="mt-16">
           <div className="mb-2 flex items-center gap-4">
             <span className="h-px w-8 bg-line" />
-            <span className="label">More apps</span>
+            <span className="label">More solutions</span>
           </div>
           <ul
             className="relative"
@@ -164,10 +171,11 @@ export default function Work() {
                   <span className="font-mono text-[11px] text-faint">{String(i + 2).padStart(2, "0")}</span>
                   <div className="min-w-0">
                     <h4 className="flex items-center gap-2.5 text-lg font-semibold tracking-tight transition-transform duration-500 group-hover:translate-x-1.5">
-                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: p.color }} />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={p.icon} alt="" className="h-7 w-7 shrink-0 rounded-lg bg-white object-contain ring-1 ring-white/10 transition-transform duration-500 group-hover:scale-110" />
                       {p.title}
                     </h4>
-                    <p className="mt-1 truncate text-[13px] text-dim">{p.summary}</p>
+                    <p className="mt-1 truncate text-[13px] text-dim"><span className="text-faint">Problem:</span> {p.problem}</p>
                   </div>
                   <span className="label hidden md:block">{p.sector}</span>
                   <StoreLinks p={p} compact />
