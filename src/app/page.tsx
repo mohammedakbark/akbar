@@ -1,122 +1,85 @@
 "use client";
 
-import { useEffect, Suspense } from "react";
-import Hero from "@/components/sections/Hero";
-import About from "@/components/sections/About";
-import Services from "@/components/sections/Services";
-import Achievements from "@/components/sections/Achievements";
-import Experience from "@/components/sections/Experience";
-import Projects from "@/components/sections/Projects";
-import Contact from "@/components/sections/Contact";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
-import dynamic from "next/dynamic";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type LenisType from "lenis";
+import Nav from "@/components/site/Nav";
+import Hero from "@/components/site/Hero";
+import Intro from "@/components/site/Intro";
+import Work from "@/components/site/Work";
+import About from "@/components/site/About";
+import Experience from "@/components/site/Experience";
+import Expertise from "@/components/site/Expertise";
+import Faq from "@/components/site/Faq";
+import Contact from "@/components/site/Contact";
+import Footer from "@/components/site/Footer";
+import Preloader from "@/components/ui/Preloader";
+import Cursor from "@/components/ui/Cursor";
+import { ReadyContext } from "@/components/ui/ready";
 
-/**
- * Dynamically import 3D components to avoid SSR issues
- */
-const EnhancedBackground = dynamic(
-  () => import("@/components/3d/EnhancedBackground"),
-  { ssr: false, loading: () => null }
-);
-
-/**
- * Main Page Component
- * - Orchestrates all major sections of the portfolio
- * - Handles smooth scrolling (Lenis) and GSAP ScrollTrigger integration
- */
 export default function Home() {
+  const [ready, setReady] = useState(false);
+  const lenisRef = useRef<LenisType | null>(null);
+  const onLoaded = useCallback(() => setReady(true), []);
+
+  // Lenis smooth scrolling + smooth anchor links.
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let lenis: any;
-    let rafId: number;
-
-    const initLenisAndScrollTrigger = async () => {
-      const Lenis = (await import("lenis")).default;
-      const gsap = (await import("gsap")).default;
-      const ScrollTrigger = (await import("gsap/ScrollTrigger")).default;
-
-      gsap.registerPlugin(ScrollTrigger);
-
-      lenis = new Lenis({
-        duration: 1.2,
-        lerp: 0.08,
-        smoothWheel: true,
-        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -12 * t)),
-      });
-
-      lenis.on("scroll", ScrollTrigger.update);
-
-      function raf(time: number) {
-        lenis.raf(time);
-        rafId = requestAnimationFrame(raf);
-      }
-      rafId = requestAnimationFrame(raf);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let rafId = 0;
+    let alive = true;
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement).closest("a[href^='#']") as HTMLAnchorElement | null;
+      const lenis = lenisRef.current;
+      if (!a || !lenis) return;
+      const target = document.querySelector(a.getAttribute("href")!);
+      if (!target) return;
+      e.preventDefault();
+      lenis.scrollTo(target as HTMLElement, { offset: -20, duration: 1.4 });
     };
 
-    initLenisAndScrollTrigger();
+    import("lenis").then(({ default: Lenis }) => {
+      if (!alive) return;
+      const lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
+      lenisRef.current = lenis;
+      const raf = (t: number) => {
+        lenis.raf(t);
+        rafId = requestAnimationFrame(raf);
+      };
+      rafId = requestAnimationFrame(raf);
+      document.addEventListener("click", onClick);
+    });
 
     return () => {
+      alive = false;
       cancelAnimationFrame(rafId);
-      lenis?.destroy?.();
+      document.removeEventListener("click", onClick);
+      lenisRef.current?.destroy();
+      lenisRef.current = null;
     };
   }, []);
 
+  // Lock scrolling while the preloader is on screen.
+  useEffect(() => {
+    document.documentElement.style.overflow = ready ? "" : "hidden";
+    if (ready) lenisRef.current?.start();
+    else lenisRef.current?.stop();
+  }, [ready]);
+
   return (
-    <>
-      {/* Enhanced 3D Background with Three.js */}
-      <Suspense fallback={null}>
-        <EnhancedBackground />
-      </Suspense>
-
-      {/* Fixed Navigation Component */}
-      <Navigation />
-
-      {/* Main Content Sections */}
-      <main className="bg-background text-foreground">
-        {/* Hero Section with 3D Background */}
-        <section id="hero" className="relative w-full">
-          <Hero />
-        </section>
-
-        {/* About & Skills Section */}
-        <section id="about" className="relative w-full bg-background">
-          <About />
-        </section>
-
-        {/* Services Section */}
-        <section id="services" className="relative w-full">
-          <Services />
-        </section>
-
-        {/* Achievements Section */}
-        <section id="achievements" className="relative w-full bg-background">
-          <Achievements />
-        </section>
-
-        {/* Experience Timeline Section */}
-        <section id="experience" className="relative w-full">
-          <Experience />
-        </section>
-
-        {/* Projects Showcase Section */}
-        <section id="projects" className="relative w-full">
-          <Projects />
-        </section>
-
-        {/* Testimonials Section
-        <section id="testimonials" className="relative w-full bg-background">
-          <Testimonials />
-        </section> */}
-
-        {/* Contact Section */}
-        <section id="contact" className="relative w-full">
-          <Contact />
-        </section>
+    <ReadyContext.Provider value={ready}>
+      <Preloader onDone={onLoaded} />
+      <Cursor />
+      <Nav />
+      <main id="main">
+        <Hero />
+        <Intro />
+        <Work />
+        <About />
+        <Experience />
+        <Expertise />
+        <Faq />
+        <Contact />
       </main>
-
-      {/* Global Footer */}
       <Footer />
-    </>
+    </ReadyContext.Provider>
   );
 }
