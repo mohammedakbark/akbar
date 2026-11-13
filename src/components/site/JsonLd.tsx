@@ -64,7 +64,10 @@ export default function JsonLd() {
             operatingSystem: [p.android && "Android", p.ios && "iOS"].filter(Boolean).join(", "),
             image: `${siteUrl}${p.icon}`,
             ...(stores.length ? { installUrl: stores[0], sameAs: stores } : {}),
-            author: { "@id": personId },
+            // Company products are credited to the company; I'm a contributor, not the author.
+            ...(p.team
+              ? { contributor: { "@id": personId }, publisher: { "@type": "Organization", name: p.team } }
+              : { author: { "@id": personId } }),
           },
         };
       }),

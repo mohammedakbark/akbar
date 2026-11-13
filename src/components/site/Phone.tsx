@@ -13,7 +13,7 @@ export default function Phone({ p, className = "" }: { p: Project; className?: s
   );
 }
 
-export function StoreLinks({ p, compact = false }: { p: Project; compact?: boolean }) {
+export function StoreLinks({ p, compact = false }: { p: Pick<Project, "title" | "android" | "ios">; compact?: boolean }) {
   const cls = compact
     ? "inline-flex h-8 w-8 items-center justify-center rounded-full border border-line text-dim transition-colors hover:border-foreground/40 hover:text-foreground"
     : "inline-flex items-center gap-2 rounded-full border border-line px-3.5 py-2 text-[12px] text-foreground/80 transition-colors hover:border-foreground/40 hover:text-foreground";

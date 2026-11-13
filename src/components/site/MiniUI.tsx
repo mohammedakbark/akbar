@@ -412,7 +412,63 @@ function CrisantHRMS({ p, t }: { p: Project; t: number }) {
   );
 }
 
+/* ───────────────────────── OnlineCheckWriter: send a payment ───────────────────────── */
+function OnlineCheckWriter({ p, t }: { p: Project; t: number }) {
+  const cycle = t % 16;
+  const methods = ["Check", "ACH", "Wire", "Card"];
+  const selected = cycle < 4 ? 3 - cycle : 0; // browses the methods, settles on Check
+  const steps = ["Created", "Approved", "Sent"];
+  const done = cycle < 6 ? 0 : cycle < 9 ? 1 : cycle < 12 ? 2 : 3; // steps completed so far
+  const sent = done === 3;
+  return (
+    <div className="flex h-full flex-col gap-[0.7em]">
+      <Header p={p} right={<span className="rounded-full bg-white/[0.06] px-[0.5em] py-[0.15em] text-[0.65em] text-white/60">USD</span>} />
+      <div className={`${card} p-[0.8em]`}>
+        <div className="text-[0.65em] text-white/45">Pay to</div>
+        <div className="text-[0.85em] font-semibold">Acme Supplies LLC</div>
+        <div className="mt-[0.4em] text-[1.5em] font-bold tabular-nums">$2,450.00</div>
+        <div className="text-[0.6em] text-white/40">Invoice #1042 · due Nov 20</div>
+      </div>
+      <div className="grid grid-cols-4 gap-[0.3em]">
+        {methods.map((m, i) => (
+          <motion.div
+            key={m}
+            animate={{ backgroundColor: i === selected ? p.color : "rgba(255,255,255,0.05)", scale: i === selected ? 1.05 : 1 }}
+            className="rounded-[0.5em] py-[0.45em] text-center text-[0.62em] font-semibold"
+          >
+            {m}
+          </motion.div>
+        ))}
+      </div>
+      <div className={`${card} flex-1 space-y-[0.55em] p-[0.8em]`}>
+        {steps.map((s, i) => {
+          const ok = i < done;
+          return (
+            <div key={s} className="flex items-center gap-[0.6em] text-[0.75em]">
+              <motion.span
+                animate={{ backgroundColor: ok ? p.color : "rgba(255,255,255,0.08)", scale: ok && i === done - 1 ? [1, 1.3, 1] : 1 }}
+                className="flex h-[1.4em] w-[1.4em] items-center justify-center rounded-full text-[0.8em] font-bold"
+              >
+                {ok ? "✓" : ""}
+              </motion.span>
+              <span className={ok ? "text-white" : "text-white/40"}>{s}</span>
+            </div>
+          );
+        })}
+      </div>
+      <motion.div
+        animate={sent ? { backgroundColor: "#10b981" } : { backgroundColor: p.color, scale: [1, 1.03, 1] }}
+        transition={sent ? {} : { scale: { duration: 1, repeat: Infinity } }}
+        className="rounded-[0.7em] py-[0.6em] text-center text-[0.85em] font-semibold"
+      >
+        {sent ? "Payment sent ✓" : "Send payment"}
+      </motion.div>
+    </div>
+  );
+}
+
 const SCREENS: Record<string, React.ComponentType<{ p: Project; t: number }>> = {
+  onlinecheckwriter: OnlineCheckWriter,
   wheelskart: Wheelskart,
   f9cars: F9Cars,
   animaline: Animaline,

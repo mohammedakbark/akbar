@@ -18,7 +18,7 @@ export const profile = {
   phoneHref: "tel:+919846475854",
   whatsapp: "https://wa.me/919846475854",
   photo: "/profile/center.webp",
-  photoDir: "/profile", // 9 head-direction frames: center, left, right, top, bottom, top-left, …
+  photoDir: "/profile", // 25 head-direction frames on a 5×5 grid (see HeadFollow.tsx; built by scripts/build-profile-frames.mjs)
   resume: "/resume.pdf",
   socials: [
     { label: "GitHub", href: "https://github.com/mohammedakbark" },
@@ -67,9 +67,75 @@ export type Project = {
   color: string; // accent used for the card's glow / thumbnail tint
   android?: string | null;
   ios?: string | null;
+  team?: string; // company name, when this is a company product I work on as part of a team
+  suite?: SuiteApp[]; // companion apps that belong to the same product
 };
 
+export type SuiteApp = { name: string; what: string; icon: string; android: string; ios: string };
+
+const play = (id: string) => `https://play.google.com/store/apps/details?id=${id}`;
+
 export const projects: Project[] = [
+  {
+    id: "onlinecheckwriter",
+    title: "OnlineCheckWriter",
+    sector: "Fintech",
+    year: "2025",
+    role: "Mobile · team product",
+    team: "Zil Money",
+    problem: "US businesses pay vendors and staff through a patchwork of paper checks, bank portals and card tools.",
+    summary:
+      "OnlineCheckWriter by Zil Money puts checks, ACH, wires, cards and mailing in one app. I'm on the mobile team: building features and API integrations in Flutter with Clean Architecture and secure auth, and shipping releases to both stores for the main app and six companion apps.",
+    tags: ["Flutter", "Clean Architecture", "Secure auth", "REST API"],
+    icon: "/apps/icons/onlinecheckwriter.png",
+    color: "#16a34a",
+    android: play("com.onlinecheckwriter.m"),
+    ios: "https://apps.apple.com/us/app/online-check-writer/id1521980907",
+    suite: [
+      {
+        name: "Zil Remit",
+        what: "International business payments",
+        icon: "/apps/icons/zilremit.png",
+        android: play("com.internationalpayments.app"),
+        ios: "https://apps.apple.com/us/app/zil-remit/id6748254326",
+      },
+      {
+        name: "Virtual Cards",
+        what: "Virtual cards & expense control",
+        icon: "/apps/icons/virtualcards.png",
+        android: play("com.virtualcard.app"),
+        ios: "https://apps.apple.com/us/app/virtual-cards/id6748954269",
+      },
+      {
+        name: "Payroll by Card",
+        what: "Fund payroll with a credit card",
+        icon: "/apps/icons/payrollbycard.png",
+        android: play("com.payrollbycard.mob"),
+        ios: "https://apps.apple.com/us/app/payroll-by-card/id6756771711",
+      },
+      {
+        name: "GetPaid Link",
+        what: "Payment links for businesses",
+        icon: "/apps/icons/getpaidlink.png",
+        android: play("com.getpaidlink.app"),
+        ios: "https://apps.apple.com/us/app/getpaid-link/id6755234489",
+      },
+      {
+        name: "Check Mail",
+        what: "Send checks by email",
+        icon: "/apps/icons/checkmail.png",
+        android: play("com.checkmail.app"),
+        ios: "https://apps.apple.com/us/app/check-mail/id6748264295",
+      },
+      {
+        name: "Document Mail",
+        what: "Scan & mail documents",
+        icon: "/apps/icons/documentmail.png",
+        android: play("com.documentmail.app"),
+        ios: "https://apps.apple.com/us/app/document-mail-scan-send/id6746794341",
+      },
+    ],
+  },
   {
     id: "wheelskart",
     title: "Wheelskart",

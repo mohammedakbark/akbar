@@ -44,7 +44,7 @@ function Featured({ p }: { p: Project }) {
         />
         <div className="relative z-10 flex flex-1 flex-col justify-between p-6 md:p-9">
           <span className="inline-flex w-fit items-center gap-2 rounded-full bg-black/40 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-live" /> Featured · Live on stores
+            <span className="h-1.5 w-1.5 rounded-full bg-live" /> {p.team ? `Featured · Team product at ${p.team}` : "Featured · Live on stores"}
           </span>
           <h3 className="max-w-md text-3xl font-semibold leading-[1.02] tracking-[-0.03em] md:text-[2.75rem]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -68,6 +68,24 @@ function Featured({ p }: { p: Project }) {
             <p className="text-[15px] leading-relaxed text-foreground/60">{p.problem}</p>
             <span className="label pt-1 text-live/90">Solution</span>
             <p className="text-[15px] leading-relaxed text-foreground/85">{p.summary}</p>
+            {p.suite && (
+              <>
+                <span className="label pt-1">Suite</span>
+                <ul className="grid gap-x-5 sm:grid-cols-2">
+                  {p.suite.map((s) => (
+                    <li key={s.name} className="flex items-center gap-2.5 border-b border-line py-2.5">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={s.icon} alt="" className="h-7 w-7 shrink-0 rounded-lg bg-white object-contain ring-1 ring-white/10" />
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-[13px] font-semibold leading-tight">{s.name}</div>
+                        <div className="truncate text-[11px] text-dim">{s.what}</div>
+                      </div>
+                      <StoreLinks p={{ title: s.name, android: s.android, ios: s.ios }} compact />
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </div>
           <div className="mt-4 flex flex-wrap gap-1.5">
             {p.tags.map((t) => (
@@ -117,7 +135,7 @@ export default function Work() {
       num="03"
       label="Solutions"
       title="Real problems. *Shipped solutions.*"
-      intro="Every project started as a business headache. Here's what it was, and what I built. All of them are live today."
+      intro="Every project started as a business headache. Here's what it was, and what I shipped. All of them are live today."
     >
       <div className="mb-8 flex flex-wrap gap-2" role="tablist" aria-label="Filter by sector">
         {sectors.map((s) => (

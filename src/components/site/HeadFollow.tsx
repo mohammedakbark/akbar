@@ -4,12 +4,23 @@ import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { profile } from "@/data/content";
 
-/** Frames on a 3×3 grid: [column, row] with -1/0/1 for left/center/right and top/center/bottom. */
-const GRID: Record<string, [number, number]> = {
-  "top-left": [-1, -1], top: [0, -1], "top-right": [1, -1],
-  left: [-1, 0], center: [0, 0], right: [1, 0],
-  "bottom-left": [-1, 1], bottom: [0, 1], "bottom-right": [1, 1],
-};
+/** Grid lines on each axis: full left/up … centre … full right/down. */
+const LINES = [-1, -0.5, 0, 0.5, 1];
+const SPACING = 0.5;
+
+/** Frames laid out as they sit on the 5×5 grid (rows: up → down, columns: left → right). */
+const LAYOUT = [
+  ["top-left", "top-half-left", "top", "top-half-right", "top-right"],
+  ["half-top-full-left", "half-top-half-left", "half-top", "half-top-half-right", "half-top-full-right"],
+  ["left", "half-left", "center", "half-right", "right"],
+  ["half-bottom-full-left", "half-bottom-half-left", "half-bottom", "half-bottom-half-right", "half-bottom-full-right"],
+  // "bottom-half-right" is turned further than "bottom-right", so they sit in turn order, not name order.
+  ["bottom-left", "bottom-half-left", "bottom", "bottom-right", "bottom-half-right"],
+];
+
+/** Frame name → [column, row] position in -1…1. */
+const GRID: Record<string, [number, number]> = {};
+LAYOUT.forEach((row, r) => row.forEach((name, c) => (GRID[name] = [LINES[c], LINES[r]])));
 const DIRS = Object.keys(GRID);
 
 const RANGE_X = 0.22; // fraction of the viewport width the cursor travels for a full left/right turn
@@ -23,17 +34,16 @@ const IDLE = ["center", "left", "top-left", "top", "top-right", "right", "center
 const clamp = (v: number) => Math.max(-1, Math.min(1, v));
 const smooth = (t: number) => t * t * (3 - 2 * t); // settle on real photos, pass quickly through blends
 
-/** Weight of grid line `line` (-1, 0 or 1) for a head position `v` in -1…1. */
+/** Weight of grid line `line` for a head position `v` in -1…1 (the two nearest lines share the weight). */
 function axisWeight(v: number, line: number) {
-  const t = smooth(Math.abs(v));
-  if (line === 0) return 1 - t;
-  return Math.sign(v) === line ? t : 0;
+  const d = Math.abs(v - line) / SPACING;
+  return d >= 1 ? 0 : 1 - smooth(d);
 }
 
 /**
  * Portrait that turns its head toward the visitor's cursor.
  * - The head position is continuous (-1…1 on each axis) and spring-smoothed, so it tracks the cursor.
- * - The 9 photos are blended by position; opacities are written straight to the DOM (no re-render).
+ * - The 25 photos are blended by position; opacities are written straight to the DOM (no re-render).
  * - A small spring drift of the whole portrait adds motion between photos.
  * - Listeners pause when the hero is off screen.
  */
