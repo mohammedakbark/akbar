@@ -22,7 +22,7 @@ export const profile = {
   resume: "/resume.pdf",
   socials: [
     { label: "GitHub", href: "https://github.com/mohammedakbark" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/in/mohammed-akbar-k/" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/mohammed-akbar-k-bb6b66262/" },
     { label: "Instagram", href: "https://www.instagram.com/akbarr.k_/" },
   ],
 };

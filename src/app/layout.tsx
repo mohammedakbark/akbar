@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Onest, Instrument_Serif, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { profile } from "@/data/content";
+import { siteUrl } from "@/data/site";
+import JsonLd from "@/components/site/JsonLd";
 
 const sans = Onest({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const serif = Instrument_Serif({
@@ -16,29 +19,40 @@ const title = "Mohammed Akbar K · Software Engineer: Mobile Apps & End-to-End D
 const description =
   "Software engineer from Kerala who turns business problems into simple software: mobile apps first, delivered end to end with backend, web and automation.";
 
-// Absolute base for share-card URLs. Set NEXT_PUBLIC_SITE_URL in Vercel once you have a custom domain;
-// until then Vercel's production URL is used automatically.
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
+const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
+// siteUrl (from content.ts) is the absolute base for canonical and share-card URLs.
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title,
+  title: { default: title, template: `%s · ${profile.name}` },
   description,
   keywords: [
     "Mohammed Akbar K",
     "Software Engineer",
     "Mobile App Developer Kerala",
     "Flutter Developer",
+    "Flutter Developer Kerala",
+    "Flutter Developer Malappuram",
     "Mobile App Developer",
+    "Freelance Mobile App Developer India",
+    "Hire Flutter Developer",
     "Business Automation",
     "Node.js",
     "React",
   ],
-  authors: [{ name: "Mohammed Akbar K" }],
-  openGraph: { type: "website", locale: "en_US", title, description },
+  authors: [{ name: profile.name, url: siteUrl }],
+  creator: profile.name,
+  publisher: profile.name,
+  category: "technology",
+  alternates: { canonical: "/" },
+  openGraph: { type: "website", locale: "en_IN", url: "/", siteName: profile.name, title, description },
   twitter: { card: "summary_large_image", title, description },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
+  ...(googleVerification ? { verification: { google: googleVerification } } : {}),
 };
 
 export const viewport: Viewport = {
@@ -56,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         {children}
+        <JsonLd />
         <div className="grain" aria-hidden />
       </body>
     </html>

@@ -11,73 +11,94 @@ const GRID: Record<string, [number, number]> = {
   "bottom-left": [-1, 1], bottom: [0, 1], "bottom-right": [1, 1],
 };
 const DIRS = Object.keys(GRID);
-const nameAt = (x: number, y: number) => DIRS.find((d) => GRID[d][0] === x && GRID[d][1] === y)!;
 
-const FADE_MS = 320; // crossfade length of each frame
-const STEP_MS = 120; // time between steps when travelling across the grid
-const ENTER = 0.13; // fraction of the viewport the cursor must move to turn the head…
-const EXIT = 0.08; // …and how far back it must come to turn it back (hysteresis: no flicker at edges)
+const RANGE_X = 0.22; // fraction of the viewport width the cursor travels for a full left/right turn
+const RANGE_Y = 0.2; // …and of the viewport height for a full up/down turn
+const HEAD_SPRING = { stiffness: 90, damping: 22, mass: 0.7 };
+const EPSILON = 0.001; // weights below this count as zero
 
 /** Touch devices: slow look-around (no cursor to follow). */
 const IDLE = ["center", "left", "top-left", "top", "top-right", "right", "center", "bottom-left", "center"];
 
-/** Axis value with hysteresis: keep the current side until the cursor clearly crosses back. */
-function axis(v: number, current: number) {
-  if (current !== 0) return Math.sign(v) === current && Math.abs(v) > EXIT ? current : Math.abs(v) > ENTER ? Math.sign(v) : 0;
-  return Math.abs(v) > ENTER ? Math.sign(v) : 0;
+const clamp = (v: number) => Math.max(-1, Math.min(1, v));
+const smooth = (t: number) => t * t * (3 - 2 * t); // settle on real photos, pass quickly through blends
+
+/** Weight of grid line `line` (-1, 0 or 1) for a head position `v` in -1…1. */
+function axisWeight(v: number, line: number) {
+  const t = smooth(Math.abs(v));
+  if (line === 0) return 1 - t;
+  return Math.sign(v) === line ? t : 0;
 }
 
 /**
  * Portrait that turns its head toward the visitor's cursor.
- * - Walks through neighbouring frames (left → center → right) like a real head turn.
- * - New frame fades in on top of the previous one (no brightness dip).
- * - A small spring drift of the whole portrait smooths motion between frames.
- * - Re-renders only when the frame changes; listeners pause when the hero is off screen.
+ * - The head position is continuous (-1…1 on each axis) and spring-smoothed, so it tracks the cursor.
+ * - The 9 photos are blended by position; opacities are written straight to the DOM (no re-render).
+ * - A small spring drift of the whole portrait adds motion between photos.
+ * - Listeners pause when the hero is off screen.
  */
 export default function HeadFollow({ className = "", fallback }: { className?: string; fallback: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
+  const imgs = useRef<Record<string, HTMLImageElement | null>>({});
   const inView = useInView(ref);
-  const [frames, setFrames] = useState({ top: "center", under: "center" });
   const [failed, setFailed] = useState(false);
   const [mode, setMode] = useState<"follow" | "idle" | "still">("still");
 
-  const shown = useRef<[number, number]>([0, 0]); // frame currently on top
-  const target = useRef<[number, number]>([0, 0]); // frame we're heading to
-  const stepTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Head position (motion values → no React re-render on mouse move).
+  const headX = useMotionValue(0);
+  const headY = useMotionValue(0);
+  const hx = useSpring(headX, HEAD_SPRING);
+  const hy = useSpring(headY, HEAD_SPRING);
 
-  // Spring drift (motion values → no React re-render on mouse move).
+  // Spring drift of the whole portrait.
   const driftX = useMotionValue(0);
   const driftY = useMotionValue(0);
   const x = useSpring(driftX, { stiffness: 60, damping: 18, mass: 0.6 });
   const y = useSpring(driftY, { stiffness: 60, damping: 18, mass: 0.6 });
 
+  // Start moving only once every frame is decoded, so the first turn has no hitch.
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const fine = window.matchMedia("(pointer: fine)").matches;
-    setMode(reduced ? "still" : fine ? "follow" : "idle");
+    let cancelled = false;
+    const all = DIRS.map((d) => imgs.current[d]?.decode().catch(() => {}));
+    Promise.all(all).then(() => {
+      if (!cancelled) setMode(fine ? "follow" : "idle");
+    });
     return () => {
-      if (stepTimer.current) clearTimeout(stepTimer.current);
+      cancelled = true;
     };
   }, []);
 
-  /** Move one grid step toward the target; repeat until we arrive. */
-  const step = () => {
-    stepTimer.current = null;
-    const [cx, cy] = shown.current;
-    const [tx, ty] = target.current;
-    if (cx === tx && cy === ty) return;
-    const next: [number, number] = [cx + Math.sign(tx - cx), cy + Math.sign(ty - cy)];
-    const prev = nameAt(cx, cy);
-    shown.current = next;
-    setFrames({ top: nameAt(next[0], next[1]), under: prev });
-    stepTimer.current = setTimeout(step, STEP_MS);
-  };
-
-  const aim = (tx: number, ty: number) => {
-    if (target.current[0] === tx && target.current[1] === ty) return;
-    target.current = [tx, ty];
-    if (!stepTimer.current) step();
-  };
+  // Blend the photos for the current head position.
+  useEffect(() => {
+    const apply = () => {
+      const px = clamp(hx.get());
+      const py = clamp(hy.get());
+      // Stacked layers: each one's opacity is its share of the weight so far, which gives an exact
+      // weighted mix with no dimming and no see-through.
+      let sum = 0;
+      for (const d of DIRS) {
+        const img = imgs.current[d];
+        if (!img) continue;
+        const w = axisWeight(px, GRID[d][0]) * axisWeight(py, GRID[d][1]);
+        if (w < EPSILON) {
+          img.style.opacity = "0";
+          img.style.willChange = "";
+          continue;
+        }
+        sum += w;
+        img.style.opacity = String(w / sum);
+        img.style.willChange = "opacity";
+      }
+    };
+    const offX = hx.on("change", apply);
+    const offY = hy.on("change", apply);
+    return () => {
+      offX();
+      offY();
+    };
+  }, [hx, hy]);
 
   // Desktop: follow the cursor while the hero is visible.
   useEffect(() => {
@@ -93,9 +114,10 @@ export default function HeadFollow({ className = "", fallback }: { className?: s
       raf = 0;
       const dx = (mx - (rect.left + rect.width / 2)) / window.innerWidth;
       const dy = (my - (rect.top + rect.height * 0.38)) / window.innerHeight; // ≈ eye level
-      aim(axis(dx, target.current[0]), axis(dy, target.current[1]));
-      driftX.set(Math.max(-1, Math.min(1, dx * 2)) * 10);
-      driftY.set(Math.max(-1, Math.min(1, dy * 2)) * 6);
+      headX.set(clamp(dx / RANGE_X));
+      headY.set(clamp(dy / RANGE_Y));
+      driftX.set(clamp(dx * 2) * 10);
+      driftY.set(clamp(dy * 2) * 6);
     };
     const onMove = (e: MouseEvent) => {
       mx = e.clientX;
@@ -103,7 +125,8 @@ export default function HeadFollow({ className = "", fallback }: { className?: s
       if (!raf) raf = requestAnimationFrame(update);
     };
     const onLeave = () => {
-      aim(0, 0);
+      headX.set(0);
+      headY.set(0);
       driftX.set(0);
       driftY.set(0);
     };
@@ -128,7 +151,8 @@ export default function HeadFollow({ className = "", fallback }: { className?: s
     const id = setInterval(() => {
       i = (i + 1) % IDLE.length;
       const [tx, ty] = GRID[IDLE[i]];
-      aim(tx, ty);
+      headX.set(tx);
+      headY.set(ty);
     }, 2400);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,34 +162,25 @@ export default function HeadFollow({ className = "", fallback }: { className?: s
 
   return (
     <motion.div ref={ref} style={{ x, y }} className={`relative aspect-[1100/1065] [contain:paint] ${className}`}>
-      {DIRS.map((d) => {
-        const isTop = d === frames.top;
-        const isUnder = d === frames.under && !isTop;
-        return (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={d}
-            src={`${profile.photoDir}/${d}.webp`}
-            alt={d === "center" ? profile.name : ""}
-            aria-hidden={d !== "center"}
-            draggable={false}
-            decoding="async"
-            fetchPriority={d === "center" ? "high" : "low"}
-            onError={d === "center" ? () => setFailed(true) : undefined}
-            className="absolute inset-0 h-full w-full select-none object-contain object-bottom"
-            style={{
-              // Top frame fades in over the previous one; the previous stays fully visible underneath
-              // until covered, then drops out (delayed), so the image never dims mid-change.
-              opacity: isTop || isUnder ? 1 : 0,
-              zIndex: isTop ? 2 : isUnder ? 1 : 0,
-              transition: isTop
-                ? `opacity ${FADE_MS}ms cubic-bezier(0.33, 1, 0.68, 1)`
-                : `opacity 0ms linear ${FADE_MS}ms`,
-              willChange: isTop || isUnder ? "opacity" : undefined,
-            }}
-          />
-        );
-      })}
+      {DIRS.map((d) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={d}
+          ref={(el) => {
+            imgs.current[d] = el;
+          }}
+          src={`${profile.photoDir}/${d}.webp`}
+          alt={d === "center" ? profile.name : ""}
+          aria-hidden={d !== "center"}
+          draggable={false}
+          decoding="async"
+          fetchPriority={d === "center" ? "high" : "low"}
+          onError={d === "center" ? () => setFailed(true) : undefined}
+          className="absolute inset-0 h-full w-full select-none object-contain object-bottom"
+          // Initial state only; opacities are driven by the head spring after mount.
+          style={{ opacity: d === "center" ? 1 : 0 }}
+        />
+      ))}
     </motion.div>
   );
 }
