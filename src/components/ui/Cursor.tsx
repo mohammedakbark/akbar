@@ -1,10 +1,10 @@
 "use client";
 
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState } from "react";
 
 /**
- * Custom cursor (fine pointers only): a dot plus a trailing ring.
+ * Custom cursor (fine pointers only): a dot plus a trailing ring, over a soft spotlight glow.
  * Ring grows over links/buttons; elements with data-cursor="Label" show that label.
  */
 export default function Cursor() {
@@ -55,12 +55,22 @@ export default function Cursor() {
     };
   }, [x, y]);
 
+  // Spotlight: a soft light that trails the cursor and brightens whatever is under it.
+  const gx = useSpring(x, { stiffness: 120, damping: 24, mass: 0.6 });
+  const gy = useSpring(y, { stiffness: 120, damping: 24, mass: 0.6 });
+  const glow = useMotionTemplate`radial-gradient(420px circle at ${gx}px ${gy}px, rgba(255,255,255,0.06), transparent 65%)`;
+
   if (!enabled) return null;
 
   const size = label ? 84 : hover ? 46 : 28;
 
   return (
     <>
+      <motion.div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 z-30 transition-opacity duration-300"
+        style={{ background: glow, mixBlendMode: "plus-lighter", opacity: hidden ? 0 : 1 }}
+      />
       <motion.div
         aria-hidden
         className="pointer-events-none fixed left-0 top-0 z-[95] flex items-center justify-center rounded-full border mix-blend-difference"
